@@ -55,18 +55,13 @@ export function StatusCard({ card, isHovered, onMouseEnter, onMouseLeave, onClic
           'transition-all duration-500 object-contain',
         )}>
           {card.svgImage ? (
-            isHovered ? (
-              <object
-                type="image/svg+xml"
-                data={card.svgImage.url}
-                className="w-[200px] h-[200px] pointer-events-none"
-                aria-label={card.title}
-              >
-                <img src={card.svgImage.url} alt={card.title} className="w-[200px] h-[200px] object-contain" />
-              </object>
-            ) : (
-              <img src={card.svgImage.url} alt={card.title} className="w-[200px] h-[200px] object-contain" />
-            )
+            <img
+              src={card.svgImage.url}
+              alt={card.title}
+              width={200}
+              height={200}
+              className="w-[200px] h-[200px] object-contain"
+            />
           ) : (
             <div className="w-full h-full rounded-full bg-white/20" />
           )}

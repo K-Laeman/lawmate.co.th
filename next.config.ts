@@ -14,13 +14,17 @@ const nextConfig: NextConfig = {
       {
         source: '/:path*',
         headers: [
+          // Browser cache: 1 hour, allow serving stale while revalidating for 24h
+          { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' },
+          // Vercel edge cache: same policy
           { key: 'CDN-Cache-Control', value: 'public, s-maxage=3600, stale-while-revalidate=86400' },
         ],
       },
-      // API routes: never cache at CDN
+      // API routes: never cache at CDN or browser
       {
         source: '/api/:path*',
         headers: [
+          { key: 'Cache-Control', value: 'no-store' },
           { key: 'CDN-Cache-Control', value: 'no-store' },
         ],
       },
@@ -29,6 +33,10 @@ const nextConfig: NextConfig = {
 
   // Image optimization settings
   images: {
+    // Serve AVIF first (50% smaller than WebP), fallback to WebP
+    formats: ['image/avif', 'image/webp'],
+    // Cache optimized images for 30 days (default is 60s — too short)
+    minimumCacheTTL: 2592000,
     remotePatterns: [
       {
         protocol: 'https',
