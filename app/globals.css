@@ -1,0 +1,304 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* LawMate Design System - Inspired by Fadada */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-google-sans);
+  --font-mono: var(--font-mono);
+
+  /* Theme color mappings */
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* LawMate Custom Colors */
+  --color-navy: var(--navy);
+  --color-navy-dark: var(--navy-dark);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  /* Radius scale */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Background & Foreground */
+  --background: oklch(1 0 0); /* #FFFFFF */
+  --foreground: oklch(0.168 0.036 264.695); /* #0F172A - Navy Dark */
+
+  /* Card */
+  --card: oklch(1 0 0); /* #FFFFFF */
+  --card-foreground: oklch(0.168 0.036 264.695); /* #0F172A */
+
+  /* Popover */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.168 0.036 264.695);
+
+  /* Primary - LawMate Blue #2563EB */
+  --primary: oklch(0.546 0.215 262.881);
+  --primary-foreground: oklch(1 0 0); /* White */
+
+  /* Secondary - Light Blue Background */
+  --secondary: oklch(0.97 0.01 250); /* #F8FAFC */
+  --secondary-foreground: oklch(0.168 0.036 264.695);
+
+  /* Muted - Gray backgrounds */
+  --muted: oklch(0.97 0.005 250); /* #F8FAFC */
+  --muted-foreground: oklch(0.446 0.027 256.802); /* #475569 - Gray 600 */
+
+  /* Accent */
+  --accent: oklch(0.93 0.02 250); /* Light blue tint */
+  --accent-foreground: oklch(0.168 0.036 264.695);
+
+  /* Destructive - Red */
+  --destructive: oklch(0.577 0.245 27.325); /* #EF4444 */
+
+  /* Border & Input */
+  --border: oklch(0.91 0.01 250); /* #E2E8F0 */
+  --input: oklch(0.91 0.01 250);
+  --ring: oklch(0.546 0.215 262.881); /* Primary blue for focus */
+
+  /* Chart colors */
+  --chart-1: oklch(0.546 0.215 262.881); /* Primary Blue */
+  --chart-2: oklch(0.696 0.17 162.48); /* Teal */
+  --chart-3: oklch(0.769 0.188 70.08); /* Yellow */
+  --chart-4: oklch(0.627 0.265 303.9); /* Purple */
+  --chart-5: oklch(0.645 0.246 16.439); /* Orange */
+
+  /* LawMate Custom - Navy colors */
+  --navy: oklch(0.307 0.058 248.711); /* #1E3A5F */
+  --navy-dark: oklch(0.168 0.036 264.695); /* #0F172A */
+
+  /* Semantic colors */
+  --success: oklch(0.696 0.17 162.48); /* #10B981 */
+  --warning: oklch(0.769 0.188 70.08); /* #F59E0B */
+
+  /* Sidebar */
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.168 0.036 264.695);
+  --sidebar-primary: oklch(0.546 0.215 262.881);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.168 0.036 264.695);
+  --sidebar-border: oklch(0.91 0.01 250);
+  --sidebar-ring: oklch(0.546 0.215 262.881);
+}
+
+.dark {
+  --background: oklch(0.168 0.036 264.695); /* Navy Dark */
+  --foreground: oklch(0.985 0 0);
+
+  --card: oklch(0.22 0.03 260);
+  --card-foreground: oklch(0.985 0 0);
+
+  --popover: oklch(0.22 0.03 260);
+  --popover-foreground: oklch(0.985 0 0);
+
+  --primary: oklch(0.65 0.2 262); /* Lighter blue for dark mode */
+  --primary-foreground: oklch(0.168 0.036 264.695);
+
+  --secondary: oklch(0.269 0.03 260);
+  --secondary-foreground: oklch(0.985 0 0);
+
+  --muted: oklch(0.269 0.03 260);
+  --muted-foreground: oklch(0.708 0 0);
+
+  --accent: oklch(0.269 0.03 260);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --destructive: oklch(0.704 0.191 22.216);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.65 0.2 262);
+
+  --chart-1: oklch(0.65 0.2 262);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  --navy: oklch(0.4 0.06 250);
+  --navy-dark: oklch(0.168 0.036 264.695);
+
+  --sidebar: oklch(0.22 0.03 260);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.65 0.2 262);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0.03 260);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.65 0.2 262);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family:
+      var(--font-google-sans),
+      "Noto Sans Thai",
+      "Google Sans",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--font-mono), "JetBrains Mono", "Fira Code", monospace;
+  }
+}
+
+/* Custom utility classes for LawMate */
+@layer utilities {
+  /* Gradient backgrounds */
+  .bg-hero-gradient {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #60a5fa 100%);
+  }
+
+  .bg-navy-gradient {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  }
+
+  .bg-cta-gradient {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  }
+
+  /* New Utility Classes from Fadada Guideline */
+  .blue-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(37, 99, 235, 0.9) 0%,
+      rgba(30, 58, 95, 0.95) 100%
+    );
+  }
+
+  .light-gradient {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .dark-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  }
+
+  /* Section spacing */
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-28;
+  }
+
+  .section-padding-sm {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+
+  /* Container max widths */
+  .container-tight {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Text styles */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  /* Feature Card Hover Effect */
+  .card-feature {
+    transition: all 0.3s ease;
+  }
+  .card-feature:hover {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+  }
+}
