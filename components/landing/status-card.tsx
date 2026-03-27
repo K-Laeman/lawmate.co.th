@@ -55,13 +55,25 @@ export function StatusCard({ card, isHovered, onMouseEnter, onMouseLeave, onClic
           'transition-all duration-500 object-contain',
         )}>
           {card.svgImage ? (
-            <img
-              src={card.svgImage.url}
-              alt={card.title}
-              width={200}
-              height={200}
-              className="w-[200px] h-[200px] object-contain"
-            />
+            <div className="relative w-[200px] h-[200px]">
+              {/* Static: visible at rest, fades out on hover */}
+              <img
+                src={card.svgImage.url}
+                alt={card.title}
+                width={200}
+                height={200}
+                className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 group-hover:opacity-0"
+              />
+              {/* Animated: object tag enables SVG animations, fades in on hover */}
+              <object
+                type="image/svg+xml"
+                data={card.svgImage.url}
+                width={200}
+                height={200}
+                className="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                aria-hidden="true"
+              />
+            </div>
           ) : (
             <div className="w-full h-full rounded-full bg-white/20" />
           )}
