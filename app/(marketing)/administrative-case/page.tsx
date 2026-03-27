@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getAdministrativeCasePage, getCorporateServices } from '@/lib/cms'
+import { getAdministrativeCasePage } from '@/lib/cms'
 import { AdministrativeCasePageClient } from '@/components/administrative-case/administrative-case-page-client'
 import { generatePageMetadata } from '@/lib/seo/metadata'
 
@@ -157,10 +157,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdministrativeCasePage() {
-  const [page, corporateServices] = await Promise.all([
-    getAdministrativeCasePage('th'),
-    getCorporateServices('th'),
-  ])
+  const page = await getAdministrativeCasePage('th')
 
   const hero = page?.hero ?? FALLBACK_HERO
   const sectionHeaders = page?.sectionHeaders ?? FALLBACK_SECTION_HEADERS
@@ -170,9 +167,10 @@ export default async function AdministrativeCasePage() {
   const leadForm = page?.leadForm ?? FALLBACK_LEAD_FORM
   const cta = page?.cta ?? FALLBACK_CTA
 
+  const cmsServices = page?.services?.filter((s) => s.isActive !== false) ?? []
   const services =
-    corporateServices.length > 0
-      ? corporateServices.map((s) => ({ id: s.id, title: s.title, description: s.description, icon: s.icon }))
+    cmsServices.length > 0
+      ? cmsServices.map((s) => ({ id: s.id, title: s.title, description: s.description, icon: s.icon }))
       : FALLBACK_SERVICES
 
   return (

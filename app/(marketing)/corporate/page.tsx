@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getCorporatePage, getCorporateServices } from '@/lib/cms'
+import { getCorporatePage } from '@/lib/cms'
 import { CorporatePageClient } from '@/components/corporate/corporate-page-client'
 import { generatePageMetadata } from '@/lib/seo/metadata'
 
@@ -166,10 +166,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CorporatePage() {
   // Fetch CMS data
-  const [corporatePage, corporateServices] = await Promise.all([
-    getCorporatePage('th'),
-    getCorporateServices('th'),
-  ])
+  const corporatePage = await getCorporatePage('th')
 
   // Prepare data with fallbacks
   const hero = corporatePage?.hero ?? FALLBACK_HERO
@@ -180,15 +177,10 @@ export default async function CorporatePage() {
   const leadForm = corporatePage?.leadForm ?? FALLBACK_LEAD_FORM
   const cta = corporatePage?.cta ?? FALLBACK_CTA
 
-  // Map corporate services from CMS or use fallback
+  const cmsServices = corporatePage?.services?.filter((s) => s.isActive !== false) ?? []
   const services =
-    corporateServices.length > 0
-      ? corporateServices.map((service) => ({
-          id: service.id,
-          title: service.title,
-          description: service.description,
-          icon: service.icon,
-        }))
+    cmsServices.length > 0
+      ? cmsServices.map((s) => ({ id: s.id, title: s.title, description: s.description, icon: s.icon }))
       : FALLBACK_SERVICES
 
   return (

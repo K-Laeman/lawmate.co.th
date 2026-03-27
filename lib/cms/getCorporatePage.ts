@@ -70,6 +70,15 @@ export interface CorporatePageData {
     }
     phoneNumber?: string
   }
+  services?: Array<{
+    id: string
+    icon: string
+    title: string
+    description: string
+    sortOrder?: number
+    isActive?: boolean
+    isFeatured?: boolean
+  }>
   seo?: {
     metaTitle?: string
     metaDescription?: string

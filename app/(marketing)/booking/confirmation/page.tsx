@@ -50,9 +50,12 @@ export default function ConfirmationPage() {
   useEffect(() => {
     async function fetchConsultation() {
       if (!bookingId) {
-        setIsLoading(false);
+        // No bookingId yet (store not rehydrated) — keep spinner, let redirect effect handle it
         return;
       }
+
+      setIsLoading(true);
+      setError(null);
 
       try {
         const response = await fetch(`/api/v1/consultations/${bookingId}/payment-status`);
