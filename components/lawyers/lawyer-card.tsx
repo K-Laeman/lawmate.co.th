@@ -157,19 +157,11 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
            </div>
         </div>
 
-        {/* Stats Row with Vertical Dividers */}
-        <div className="border-t border-b border-slate-100 py-2 grid grid-cols-3 divide-x divide-slate-100 bg-slate-50/50">
-           <div className="text-center px-2">
-              <span className="block text-lg font-bold text-navy-dark">{lawyer.rating.toFixed(1)}</span>
-              <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">คะแนน</span>
-           </div>
-           <div className="text-center px-2">
-              <span className="block text-lg font-bold text-navy-dark">{lawyer.totalCases}</span>
-              <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">คดี</span>
-           </div>
+        {/* Stats Row */}
+        <div className="border-t border-b border-slate-100 py-2 flex justify-center bg-slate-50/50">
            <div className="text-center px-2">
               <span className="block text-lg font-bold text-navy-dark">{lawyer.experienceYears}</span>
-              <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">ปี (Exp)</span>
+              <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">ประสบการณ์ ปี</span>
            </div>
         </div>
 

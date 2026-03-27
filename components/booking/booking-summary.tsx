@@ -163,18 +163,6 @@ export function BookingSummary({ onBack }: BookingSummaryProps) {
         } catch {
           // Response body was not JSON
         }
-        // Phone belongs to existing account — redirect to dashboard login
-        if (errorMessage.includes('มีบัญชีผู้ใช้แล้ว')) {
-          toast.error('กรุณาเข้าสู่ระบบก่อนทำการจอง', {
-            description: 'หมายเลขโทรศัพท์นี้มีบัญชีอยู่แล้ว',
-            action: {
-              label: 'เข้าสู่ระบบ',
-              onClick: () => { window.location.href = `${DASHBOARD_URL}/login?redirect=/booking`; },
-            },
-          });
-          setIsSubmitting(false);
-          return;
-        }
         throw new Error(errorMessage);
       }
 

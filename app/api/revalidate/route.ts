@@ -20,7 +20,7 @@ const pathsByCollection: Record<string, string[]> = {
   'contact-page': ['/contact'],
   'faq-page': ['/faq'],
   'corporate-page': ['/corporate'],
-  'corporate-pages': ['/corporate'],
+  'administrative-case-page': ['/administrative-case'],
   'legal-pages': ['/terms', '/privacy'],
   'company-values': ['/about'],
   'company-timeline': ['/about'],
