@@ -88,6 +88,7 @@ export type { BlogsPageData } from './getBlogsPage'
 
 export { getCorporatePage } from './getCorporatePage'
 export type { CorporatePageData } from './getCorporatePage'
+export { getCorporatePageBySlug, getAllCorporatePageSlugs } from './getCorporatePageBySlug'
 
 // Content Fetchers - Marketing
 export { getActivePopupBanner, getAllPopupBanners } from './getPopupBanners'
