@@ -135,9 +135,31 @@ export function AdministrativeCasePageClient({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+    try {
+      const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL ?? ''
+      const response = await fetch(`${dashboardUrl}/api/v1/contacts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.contactName || formData.companyName,
+          email: formData.email,
+          phone: formData.phone,
+          inquiryType: 'administrative-case',
+          subject: `คดีปกครอง: ${formData.companyName || formData.contactName}`,
+          message: formData.message,
+        }),
+      })
+      if (!response.ok) {
+        const result = await response.json()
+        throw new Error(result.error?.message || 'ส่งข้อความไม่สำเร็จ')
+      }
+      setIsSubmitted(true)
+    } catch (err) {
+      console.error('Lead form error:', err)
+      alert(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
