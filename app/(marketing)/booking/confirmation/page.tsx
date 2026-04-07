@@ -57,7 +57,7 @@ export default function ConfirmationPage() {
         selectedLawyer: store.selectedLawyer,
         selectedPackage: store.selectedPackage,
         selectedDate: store.selectedDate,
-        selectedTime: store.selectedTime,
+        selectedTime: store.selectedTime ?? '',
         contactPhone: store.contactPhone,
         contactEmail: store.contactEmail,
       });
