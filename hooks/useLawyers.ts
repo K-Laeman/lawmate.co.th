@@ -50,6 +50,7 @@ export function useLawyers(options: UseLawyersOptions = {}): UseLawyersReturn {
           specializations: lawyer.specializations || [],
           serviceAreas: lawyer.serviceAreas || [],
           isRecommended: lawyer.isRecommended ?? false,
+          isNationwide: lawyer.isNationwide ?? false,
         }));
 
         setLawyers(transformedLawyers);
@@ -125,6 +126,7 @@ export function useLawyerDetail(lawyerId: string | null): UseLawyerDetailReturn 
           specializations: data.specializations || [],
           serviceAreas: data.serviceAreas || [],
           isRecommended: data.isRecommended ?? false,
+          isNationwide: data.isNationwide ?? false,
         });
       } else {
         setError(result.error?.message || 'ไม่พบทนายความที่ระบุ');

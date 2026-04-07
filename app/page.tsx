@@ -28,6 +28,7 @@ const BlogsSection = dynamic(() =>
 const CTASection = dynamic(() =>
   import('@/components/landing/cta-section').then((m) => m.CTASection)
 );
+import { cookies } from 'next/headers';
 import {
   getHomepage,
   getSiteSettings,
@@ -45,8 +46,24 @@ import { mergeSEOWithDefaults, generatePageMetadata } from '@/lib/seo/metadata';
 import { generateOrganizationJsonLd, JsonLdScript } from '@/lib/seo/json-ld';
 import { SITE_CONFIG } from '@/lib/seo/constants';
 
-// ISR: revalidate every hour; on-demand revalidation via /api/revalidate handles immediate updates
-export const revalidate = 3600;
+async function getCurrentUser() {
+  const dashboardUrl = process.env.DASHBOARD_URL || 'http://localhost:3000';
+  try {
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore.toString();
+    if (!cookieHeader) return null;
+
+    const res = await fetch(`${dashboardUrl}/api/v1/auth/me`, {
+      headers: { cookie: cookieHeader },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.user ?? null;
+  } catch {
+    return null;
+  }
+}
 
 // Generate metadata from CMS with fallbacks
 export async function generateMetadata(): Promise<Metadata> {
@@ -82,6 +99,7 @@ export default async function Home() {
     trustPillars,
     howItWorks,
     blogResult,
+    currentUser,
   ] = await Promise.all([
     getHomepage('th'),
     getSiteSettings('th'),
@@ -94,6 +112,7 @@ export default async function Home() {
     getTrustPillars('th'),
     getHowItWorks('th'),
     getBlogPosts('th', { limit: 3 }),
+    getCurrentUser(),
   ]);
 
   // Section visibility - default to true if not set
@@ -122,6 +141,7 @@ export default async function Home() {
       <Header
         navItems={navData?.headerNav?.filter((item) => item.isActive !== false)}
         headerCta={navData?.headerCta}
+        currentUser={currentUser}
       />
       <main>
         {/* Conditionally render sections based on CMS visibility settings */}

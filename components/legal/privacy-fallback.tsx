@@ -181,10 +181,10 @@ export function PrivacyFallbackContent() {
         หากมีคำถามหรือต้องการใช้สิทธิเกี่ยวกับข้อมูลส่วนบุคคล:
       </p>
       <ul className="list-none text-gray-700 space-y-2 mb-6">
-        <li>เจ้าหน้าที่คุ้มครองข้อมูล (DPO)</li>
-        <li>อีเมล: dpo@lawmate.co.th</li>
-        <li>โทรศัพท์: 02-123-4567</li>
-        <li>ที่อยู่: 123 อาคารเพื่อนทนาย ชั้น 15 ถนนสาทร กรุงเทพฯ 10500</li>
+        <li>บริษัท ลอว์ เมต โซลูชั่นส์ จำกัด</li>
+        <li>อีเมล: lawmatesolutions@gmail.com</li>
+        <li>โทรศัพท์: 062-4134665</li>
+        <li>ที่อยู่: 129/176 หมู่บ้านพฤกษา 3 ซอย 1 บางคูรัด บางบัวทอง นนทบุรี 11110</li>
       </ul>
 
       <div className="border-t border-slate-200 pt-8 mt-12">

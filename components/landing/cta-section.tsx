@@ -33,11 +33,11 @@ interface CTASectionProps {
 export function CTASection({ ctaData, siteSettings }: CTASectionProps) {
   const headline = ctaData?.headline || 'พร้อมแก้ปัญหากฎหมายของคุณ?';
   const description = ctaData?.description || 'เริ่มต้นปรึกษาทนายความได้เลยวันนี้ ไม่ว่าจะเป็นคดีเล็กหรือใหญ่ เรามีทนายความพร้อมช่วยเหลือ';
-  const phone = ctaData?.phoneNumber || siteSettings?.phone || '02-456-7890';
+  const phone = ctaData?.phoneNumber || siteSettings?.phone || '062-4134665';
   const phoneHref = phone.replace(/[^0-9+]/g, '');
   const lineId = siteSettings?.lineId || '@lawmate';
   const lineUrl = siteSettings?.lineUrl || `https://line.me/ti/p/${lineId}`;
-  const email = siteSettings?.email || 'support@lawmate.co.th';
+  const email = siteSettings?.email || 'lawmatesolutions@gmail.com';
   return (
     <section id="contact" className="section-padding relative overflow-hidden text-white">
       <BackgroundPattern variant="hero" />

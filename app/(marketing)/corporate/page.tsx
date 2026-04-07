@@ -148,7 +148,7 @@ const FALLBACK_CTA = {
     text: 'ติดต่อเราวันนี้',
     url: '/contact',
   },
-  phoneNumber: '02-123-4567',
+  phoneNumber: '062-4134665',
 }
 
 export async function generateMetadata(): Promise<Metadata> {

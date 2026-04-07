@@ -120,9 +120,11 @@ export function LegalPageContent({
                   {hasCMSContent ? (
                     sections.map((section, index) => (
                       <div key={section.heading || index}>
-                        <h2 className="text-2xl font-bold text-navy-dark mt-12 first:mt-0 mb-4 border-b border-slate-100 pb-2">
-                          {section.heading}
-                        </h2>
+                        {section.heading !== 'นโยบายเพิ่มเติม' && (
+                          <h2 className="text-2xl font-bold text-navy-dark mt-12 first:mt-0 mb-4 border-b border-slate-100 pb-2">
+                            {section.heading}
+                          </h2>
+                        )}
                         <RichTextRenderer content={section.content} />
                       </div>
                     ))

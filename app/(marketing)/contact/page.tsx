@@ -16,22 +16,22 @@ const FALLBACK_CONTACT_INFO = [
   {
     icon: 'MapPin',
     title: 'ที่อยู่',
-    content: '123 อาคารเพื่อนทนาย ชั้น 15\nถนนสาทร แขวงสีลม\nเขตบางรัก กรุงเทพฯ 10500',
+    content: '129/176 หมู่บ้านพฤกษา 3 ซอย 1\nบางคูรัด บางบัวทอง\nนนทบุรี 11110',
   },
   {
     icon: 'Phone',
     title: 'โทรศัพท์',
-    content: '02-123-4567\n081-234-5678 (สายด่วน)',
+    content: '062-4134665',
   },
   {
     icon: 'Mail',
     title: 'อีเมล',
-    content: 'support@lawmate.co.th\ninfo@lawmate.co.th',
+    content: 'lawmatesolutions@gmail.com',
   },
   {
     icon: 'Clock',
     title: 'เวลาทำการ',
-    content: 'จันทร์ - ศุกร์: 09:00 - 18:00\nเสาร์: 09:00 - 12:00',
+    content: 'จันทร์ - ศุกร์: 09:00 - 20:00\nเสาร์ - อาทิตย์: 10:00 - 21:00',
   },
 ]
 

@@ -19,7 +19,7 @@ interface FloatingHotlineProps {
 }
 
 export function FloatingHotline({
-  phoneNumber = '02-123-4567',
+  phoneNumber = '062-4134665',
   lineId = '@lawmate',
   className,
   enabled = true,

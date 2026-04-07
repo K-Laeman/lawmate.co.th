@@ -7,13 +7,13 @@ export const SITE_CONFIG = {
   defaultTitle: 'เพื่อนทนาย by LawMate | แพลตฟอร์มปรึกษาทนายความออนไลน์',
   defaultDescription:
     'เชื่อมต่อกับทนายความที่ผ่านการรับรองทั่วประเทศไทย ปรึกษาปัญหากฎหมายง่าย รวดเร็ว และปลอดภัย ไม่ว่าจะเป็นคดีแพ่ง คดีอาญา หรือกฎหมายธุรกิจ',
-  phone: '02-456-7890',
-  email: 'support@lawmate.co.th',
+  phone: '062-4134665',
+  email: 'lawmatesolutions@gmail.com',
   address: {
-    street: '123 อาคารเพื่อนทนาย ชั้น 15 ถนนสาทร',
-    locality: 'แขวงสีลม เขตบางรัก',
-    region: 'กรุงเทพมหานคร',
-    postalCode: '10500',
+    street: '129/176 หมู่บ้านพฤกษา 3 ซอย 1',
+    locality: 'บางคูรัด บางบัวทอง',
+    region: 'นนทบุรี',
+    postalCode: '11110',
     country: 'TH',
   },
   socialLinks: {

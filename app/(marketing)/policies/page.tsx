@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { FileText, Shield, FileX, Database, MessageCircle, Star, ChevronRight, Scale } from 'lucide-react'
-import { getLegalPages } from '@/lib/cms'
+import { getLegalPages, getSiteSettings } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'นโยบายและข้อกำหนด | เพื่อนทนาย',
@@ -69,8 +69,12 @@ const policies = [
 ]
 
 export default async function PoliciesPage() {
-  const allPages = await getLegalPages('th')
+  const [allPages, siteSettings] = await Promise.all([
+    getLegalPages('th'),
+    getSiteSettings('th'),
+  ])
   const dynamicPages = allPages.filter((p) => !DEDICATED_SLUGS.includes(p.slug))
+  const contactEmail = siteSettings?.email || 'lawmatesolutions@gmail.com'
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -169,8 +173,8 @@ export default async function PoliciesPage() {
               ติดต่อเรา
             </Link>
             {' '}หรือส่งอีเมลมาที่{' '}
-            <a href="mailto:legal@lawmate.co.th" className="text-primary font-medium hover:underline">
-              legal@lawmate.co.th
+            <a href={`mailto:${contactEmail}`} className="text-primary font-medium hover:underline">
+              {contactEmail}
             </a>
           </p>
         </div>

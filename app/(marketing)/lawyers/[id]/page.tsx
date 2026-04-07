@@ -113,6 +113,8 @@ export default async function LawyerDetailPage({ params }: LawyerDetailPageProps
     };
   });
 
+  const isNationwide = lawyer.isNationwide || (lawyer.serviceAreas?.length ?? 0) >= 77;
+
   // Get weekly schedule from lawyer availability
   const weekSchedule = getWeekSchedule(lawyer.availability || []);
   const today = new Date().getDay();
@@ -170,15 +172,17 @@ export default async function LawyerDetailPage({ params }: LawyerDetailPageProps
 
                 {/* Stats */}
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-5">
-                  <div className="flex items-center gap-1.5">
-                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    <span className="font-bold text-white">
-                      {lawyer.rating.toFixed(1)}
-                    </span>
-                    <span className="text-blue-300 text-sm">
-                      ({lawyer.totalReviews} รีวิว)
-                    </span>
-                  </div>
+                  {lawyer.totalReviews > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <span className="font-bold text-white">
+                        {lawyer.rating.toFixed(1)}
+                      </span>
+                      <span className="text-blue-300 text-sm">
+                        ({lawyer.totalReviews} รีวิว)
+                      </span>
+                    </div>
+                  )}
 
                   <div className="w-px h-4 bg-white/20 hidden sm:block" />
 
@@ -262,7 +266,7 @@ export default async function LawyerDetailPage({ params }: LawyerDetailPageProps
             )}
 
             {/* Service Areas */}
-            {lawyer.serviceAreas && lawyer.serviceAreas.length > 0 && (
+            {(isNationwide || (lawyer.serviceAreas && lawyer.serviceAreas.length > 0)) && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -272,11 +276,19 @@ export default async function LawyerDetailPage({ params }: LawyerDetailPageProps
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {lawyer.serviceAreas.map((area) => (
-                      <Badge key={area.id} variant="secondary">
-                        {area.nameTh}
-                      </Badge>
-                    ))}
+                    {isNationwide ? (
+                      <span className="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200">
+                        <MapPin className="w-3.5 h-3.5" />
+                        ทั่วประเทศ
+                      </span>
+                    ) : (
+                      lawyer.serviceAreas.map((area) => (
+                        <span key={area.id} className="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {area.nameTh}
+                        </span>
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>

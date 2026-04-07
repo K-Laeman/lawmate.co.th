@@ -235,8 +235,8 @@ const FALLBACK_PAGE = {
       url: '/contact',
     },
     secondaryButton: {
-      text: 'โทร 02-123-4567',
-      phone: '021234567',
+      text: 'โทร 062-4134665',
+      phone: '0624134665',
     },
   },
 }

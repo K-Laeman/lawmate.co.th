@@ -145,9 +145,9 @@ export function TermsFallbackContent() {
       </h2>
       <p className="text-gray-700 mb-4">หากมีคำถามเกี่ยวกับข้อกำหนดนี้ สามารถติดต่อได้ที่:</p>
       <ul className="list-none text-gray-700 space-y-2 mb-6">
-        <li>อีเมล: legal@lawmate.co.th</li>
-        <li>โทรศัพท์: 02-123-4567</li>
-        <li>ที่อยู่: 123 อาคารเพื่อนทนาย ชั้น 15 ถนนสาทร กรุงเทพฯ 10500</li>
+        <li>อีเมล: lawmatesolutions@gmail.com</li>
+        <li>โทรศัพท์: 062-4134665</li>
+        <li>ที่อยู่: 129/176 หมู่บ้านพฤกษา 3 ซอย 1 บางคูรัด บางบัวทอง นนทบุรี 11110</li>
       </ul>
 
       <div className="border-t border-slate-200 pt-8 mt-12">

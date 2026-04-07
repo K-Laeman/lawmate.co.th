@@ -141,7 +141,7 @@ const FALLBACK_CTA = {
   headline: 'พร้อมสู้คดีปกครองด้วยกันหรือยัง?',
   description: 'ติดต่อเราวันนี้เพื่อรับคำปรึกษาเบื้องต้นฟรี และให้เราช่วยปกป้องสิทธิของคุณ',
   primaryButton: { text: 'ติดต่อทีมคดีปกครอง', url: '/contact' },
-  phoneNumber: '02-123-4567',
+  phoneNumber: '062-4134665',
 }
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -21,7 +21,7 @@ const pathsByCollection: Record<string, string[]> = {
   'faq-page': ['/faq'],
   'corporate-page': ['/corporate'],
   'administrative-case-page': ['/administrative-case'],
-  'legal-pages': ['/terms', '/privacy'],
+  'legal-pages': ['/policies', '/terms', '/privacy', '/cancellation-policy', '/chat-disclaimer', '/data-retention-policy', '/review-policy'],
   'company-values': ['/about'],
   'company-timeline': ['/about'],
   'team-members': ['/about'],

@@ -30,35 +30,51 @@ const DASHBOARD_URL = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'http://localhost
 
 export default function ConfirmationPage() {
   const router = useRouter();
-  const {
-    bookingCode,
-    bookingId,
-    selectedLawyer,
-    selectedPackage,
-    selectedDate,
-    selectedTime,
-    contactPhone,
-    contactEmail,
-    reset,
-  } = useBookingStore();
+  const store = useBookingStore();
+
+  // Snapshot booking data into local state so we can reset the store after verification
+  const [booking, setBooking] = useState<{
+    bookingCode: string;
+    bookingId: string;
+    selectedLawyer: typeof store.selectedLawyer;
+    selectedPackage: typeof store.selectedPackage;
+    selectedDate: typeof store.selectedDate;
+    selectedTime: string;
+    contactPhone: string;
+    contactEmail: string;
+  } | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState(false);
 
+  // Snapshot store data on mount (before reset clears it)
+  useEffect(() => {
+    if (store.bookingId && store.selectedPackage && !booking) {
+      setBooking({
+        bookingCode: store.bookingCode,
+        bookingId: store.bookingId,
+        selectedLawyer: store.selectedLawyer,
+        selectedPackage: store.selectedPackage,
+        selectedDate: store.selectedDate,
+        selectedTime: store.selectedTime,
+        contactPhone: store.contactPhone,
+        contactEmail: store.contactEmail,
+      });
+    }
+  }, [store.bookingId, store.selectedPackage, booking]);
+
   // Fetch consultation data from backend to verify
   useEffect(() => {
-    async function fetchConsultation() {
-      if (!bookingId) {
-        // No bookingId yet (store not rehydrated) — keep spinner, let redirect effect handle it
-        return;
-      }
+    const id = booking?.bookingId || store.bookingId;
+    if (!id) return;
 
+    async function fetchConsultation() {
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await fetch(`/api/v1/consultations/${bookingId}/payment-status`);
+        const response = await fetch(`/api/v1/consultations/${id}/payment-status`);
         const result = await response.json();
 
         if (result.success) {
@@ -80,22 +96,29 @@ export default function ConfirmationPage() {
     }
 
     fetchConsultation();
-  }, [bookingId]);
+  }, [booking?.bookingId, store.bookingId]);
 
-  // Redirect if no booking
+  // Clear store after successful verification
   useEffect(() => {
-    if (!bookingId || !selectedPackage) {
+    if (isVerified && booking) {
+      store.reset();
+    }
+  }, [isVerified, booking]);
+
+  // Redirect if no booking data at all
+  useEffect(() => {
+    if (!store.bookingId && !booking) {
       router.replace('/booking');
     }
-  }, [bookingId, selectedPackage, router]);
+  }, [store.bookingId, booking, router]);
 
   const handleNewBooking = () => {
-    reset();
+    store.reset();
     router.push('/booking');
   };
 
   const handleShare = async () => {
-    const shareText = `นัดหมายปรึกษาทนาย LawMate\nรหัสการจอง: ${bookingCode}\nวันที่: ${selectedDate ? selectedDate.toLocaleDateString('th-TH') : ''} เวลา: ${selectedTime} น.`;
+    const shareText = `นัดหมายปรึกษาทนาย LawMate\nรหัสการจอง: ${booking?.bookingCode}\nวันที่: ${booking?.selectedDate ? new Date(booking.selectedDate).toLocaleDateString('th-TH') : ''} เวลา: ${booking?.selectedTime} น.`;
     if (navigator.share) {
       try {
         await navigator.share({ title: 'นัดหมาย LawMate', text: shareText });
@@ -153,9 +176,12 @@ export default function ConfirmationPage() {
     );
   }
 
-  if (!selectedPackage || !selectedDate) {
+  if (!booking?.selectedPackage || !booking?.selectedDate) {
     return null;
   }
+
+  const { bookingCode, selectedLawyer, selectedPackage, selectedTime, contactPhone, contactEmail } = booking;
+  const selectedDate = booking.selectedDate ? new Date(booking.selectedDate) : new Date();
 
   return (
     <div className="min-h-screen bg-muted">
@@ -356,8 +382,8 @@ export default function ConfirmationPage() {
           {/* Support */}
           <p className="text-center text-sm text-gray-500 mt-8">
             มีคำถาม? ติดต่อเราได้ที่{' '}
-            <a href="tel:024567890" className="text-primary font-medium">
-              02-456-7890
+            <a href="tel:0624134665" className="text-primary font-medium">
+              062-4134665
             </a>{' '}
             หรือ Line:{' '}
             <a href="https://line.me/ti/p/@lawmate" className="text-primary font-medium">

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, ChevronDown } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, ChevronDown, User } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,16 +47,26 @@ interface HeaderCta {
   lawyerRegisterText?: string;
 }
 
+interface CurrentUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
 interface HeaderProps {
   variant?: 'dark' | 'light';
   navItems?: NavItem[] | null;
   headerCta?: HeaderCta | null;
   forceScrolled?: boolean;
+  currentUser?: CurrentUser | null;
 }
 
-export function Header({ variant = 'dark', navItems: cmsNavItems, headerCta, forceScrolled = false }: HeaderProps) {
+export function Header({ variant = 'dark', navItems: cmsNavItems, headerCta, forceScrolled = false, currentUser }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(forceScrolled);
+  const [user, setUser] = useState<CurrentUser | null>(currentUser ?? null);
+  const pathname = usePathname();
   const useDarkText = isScrolled || variant === 'light';
 
   // Use CMS nav items if available (filtering inactive), otherwise fall back to defaults
@@ -67,6 +78,23 @@ export function Header({ variant = 'dark', navItems: cmsNavItems, headerCta, for
   const lawyerButtonText = headerCta?.lawyerButtonText || 'สำหรับเพื่อนทนาย';
   const lawyerLoginText = headerCta?.lawyerLoginText || 'เข้าสู่ระบบ';
   const lawyerRegisterText = headerCta?.lawyerRegisterText || 'สมัครสมาชิก';
+
+  // Re-check session on client-side navigation and when window regains focus (e.g. after login in new tab)
+  const checkSession = () => {
+    fetch('/api/v1/auth/session')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setUser(data?.user ?? null))
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, [pathname]);
+
+  useEffect(() => {
+    window.addEventListener('focus', checkSession);
+    return () => window.removeEventListener('focus', checkSession);
+  }, []);
 
   // Handle scroll effect
   useEffect(() => {
@@ -147,36 +175,61 @@ export function Header({ variant = 'dark', navItems: cmsNavItems, headerCta, for
 
           {/* Desktop CTA Buttons — static links to dashboard app */}
           <div className="hidden lg:flex items-center gap-3">
-            <Button
-              asChild
-              className={cn(
-                "transition-all duration-300 shadow-md hover:shadow-lg",
-                !useDarkText && "bg-white text-primary hover:bg-white/90 border-transparent"
-              )}
-            >
-              <a href={`${DASHBOARD_URL}/login`}>{clientButtonText}</a>
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className={cn(
-                  "transition-all duration-300 shadow-md hover:shadow-lg",
-                  !useDarkText && "bg-white text-primary hover:bg-white/90 border-transparent"
+            {user ? (
+              <>
+                <span className={cn(
+                  "text-sm font-medium transition-colors duration-300",
+                  useDarkText ? "text-gray-600" : "text-white/90"
                 )}>
-                  {lawyerButtonText}
-                  <ChevronDown className="w-4 h-4 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[var(--radix-dropdown-menu-trigger-width)]">
-                <DropdownMenuItem asChild>
-                  <a href={`${DASHBOARD_URL}/login?role=lawyer`} className="cursor-pointer">
-                    {lawyerLoginText}
+                  สวัสดี, {user.firstName}
+                </span>
+                <Button
+                  asChild
+                  className={cn(
+                    "transition-all duration-300 shadow-md hover:shadow-lg",
+                    !useDarkText && "bg-white text-primary hover:bg-white/90 border-transparent"
+                  )}
+                >
+                  <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer">
+                    <User className="w-4 h-4 mr-1" />
+                    แดชบอร์ด
                   </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem disabled>
-                  {lawyerRegisterText}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  asChild
+                  className={cn(
+                    "transition-all duration-300 shadow-md hover:shadow-lg",
+                    !useDarkText && "bg-white text-primary hover:bg-white/90 border-transparent"
+                  )}
+                >
+                  <a href={`${DASHBOARD_URL}/login`} target="_blank" rel="noopener noreferrer">{clientButtonText}</a>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className={cn(
+                      "transition-all duration-300 shadow-md hover:shadow-lg",
+                      !useDarkText && "bg-white text-primary hover:bg-white/90 border-transparent"
+                    )}>
+                      {lawyerButtonText}
+                      <ChevronDown className="w-4 h-4 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                    <DropdownMenuItem asChild>
+                      <a href={`${DASHBOARD_URL}/login?role=lawyer`} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                        {lawyerLoginText}
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                      {lawyerRegisterText}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -215,20 +268,34 @@ export function Header({ variant = 'dark', navItems: cmsNavItems, headerCta, for
                   </Link>
                 ))}
                 <div className="border-t border-gray-200 pt-4 mt-4 flex flex-col gap-3">
-                  <Button asChild className="w-full">
-                    <a href={`${DASHBOARD_URL}/login`} onClick={() => setIsOpen(false)}>
-                      {clientButtonText}
-                    </a>
-                  </Button>
-                  <p className="text-xs text-gray-500 mt-2">{lawyerButtonText}</p>
-                  <Button variant="outline" asChild className="w-full">
-                    <a href={`${DASHBOARD_URL}/login?role=lawyer`} onClick={() => setIsOpen(false)}>
-                      {lawyerLoginText}
-                    </a>
-                  </Button>
-                  <Button className="w-full" disabled>
-                    {lawyerRegisterText}
-                  </Button>
+                  {user ? (
+                    <>
+                      <p className="text-sm text-gray-600 font-medium">สวัสดี, {user.firstName} {user.lastName}</p>
+                      <Button asChild className="w-full">
+                        <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
+                          <User className="w-4 h-4 mr-1" />
+                          แดชบอร์ด
+                        </a>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button asChild className="w-full">
+                        <a href={`${DASHBOARD_URL}/login`} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
+                          {clientButtonText}
+                        </a>
+                      </Button>
+                      <p className="text-xs text-gray-500 mt-2">{lawyerButtonText}</p>
+                      <Button variant="outline" asChild className="w-full">
+                        <a href={`${DASHBOARD_URL}/login?role=lawyer`} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
+                          {lawyerLoginText}
+                        </a>
+                      </Button>
+                      <Button className="w-full" disabled>
+                        {lawyerRegisterText}
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
