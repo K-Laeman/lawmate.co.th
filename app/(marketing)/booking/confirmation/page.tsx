@@ -52,7 +52,7 @@ export default function ConfirmationPage() {
   useEffect(() => {
     if (store.bookingId && store.selectedPackage && !booking) {
       setBooking({
-        bookingCode: store.bookingCode,
+        bookingCode: store.bookingCode ?? '',
         bookingId: store.bookingId,
         selectedLawyer: store.selectedLawyer,
         selectedPackage: store.selectedPackage,
