@@ -148,7 +148,7 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
             </div>
 
             {/* Experience */}
-            <div className="hidden sm:flex flex-col items-end gap-1 justify-end -translate-y-[24px] bg-amber-600">
+            <div className="hidden sm:flex flex-col items-end gap-1 justify-end -translate-y-[24px]">
               <div className="flex items-end gap-1.5 ">
                 <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
                   Experience :
