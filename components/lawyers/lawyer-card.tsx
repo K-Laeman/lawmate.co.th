@@ -32,7 +32,8 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
 
   // Calculate filled icons: 1 icon per 2 years, max 5 icons (≥10 years = full)
   const filledIcons = Math.min(5, Math.ceil(lawyer.experienceYears / 2));
-  const isNationwide = lawyer.isNationwide || (lawyer.serviceAreas?.length ?? 0) >= 77;
+  const isNationwide =
+    lawyer.isNationwide || (lawyer.serviceAreas?.length ?? 0) >= 77;
 
   return (
     <div className="h-full pt-4 px-2 pb-2">
@@ -148,17 +149,15 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
             </div>
 
             {/* Experience */}
-            <div className="hidden sm:flex flex-col items-end gap-1 justify-end -translate-y-[24px]">
+            <div className="flex flex-col items-end gap-1 justify-end -translate-y-[24px]">
               <div className="flex items-end gap-1.5 ">
-                <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
-                  Experience :
+                <span className="text-sm font-medium text-white tracking-widest">
+                  ประสบการณ์
                 </span>
-                <span className="text-base font-bold text-gray-400">
+                <span className="text-base font-bold text-white">
                   {lawyer.experienceYears}
                 </span>
-                <span className="text-[10px] font-medium text-gray-400">
-                  YRS.
-                </span>
+                <span className="text-sm font-medium text-white">ปี</span>
               </div>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
@@ -219,11 +218,13 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
                 <MapPin className="w-[14px] h-[14px]" />
                 ทั่วประเทศ
               </span>
-            ) : serviceAreaNames.length > 0 && (
-              <span className="text-[11.5px] font-medium px-[9px] py-[5px] rounded-md bg-gray-50 text-gray-600 border border-gray-100 flex items-center gap-1">
-                <MapPin className="w-[14px] h-[14px]" />
-                {serviceAreaNames[0]}
-              </span>
+            ) : (
+              serviceAreaNames.length > 0 && (
+                <span className="text-[11.5px] font-medium px-[9px] py-[5px] rounded-md bg-gray-50 text-gray-600 border border-gray-100 flex items-center gap-1">
+                  <MapPin className="w-[14px] h-[14px]" />
+                  {serviceAreaNames[0]}
+                </span>
+              )
             )}
           </div>
 
