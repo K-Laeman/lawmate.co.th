@@ -167,6 +167,7 @@ export default function PaymentPage() {
       const docRes = await fetch('/api/v1/documents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           fileName: selectedFile.name,
           fileSize: selectedFile.size,
@@ -181,6 +182,7 @@ export default function PaymentPage() {
       // Step 2: Upload file via proxy
       const uploadRes = await fetch(`/api/v1/proxy-upload?url=${encodeURIComponent(uploadUrl)}`, {
         method: 'PUT',
+        credentials: 'include',
         body: selectedFile,
         headers: { 'Content-Type': selectedFile.type },
       });
@@ -189,6 +191,7 @@ export default function PaymentPage() {
       // Step 3: Submit slip
       const slipRes = await fetch(`/api/v1/consultations/${bookingId}/submit-slip`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ documentId: document.id, slipUrl: document.s3Url }),
       });
