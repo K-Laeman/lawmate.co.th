@@ -30,9 +30,9 @@ import { usePaymentStatus } from '@/hooks/usePaymentStatus';
 import { GridPattern } from '@/components/ui/grid-pattern';
 
 const DEFAULT_BANK_INFO = {
-  bankName: 'ธนาคารกสิกรไทย',
-  accountName: 'บริษัท ลอว์เมท จำกัด',
-  accountNumber: '123-4-56789-0',
+  bankName: '',
+  accountName: '',
+  accountNumber: '',
 };
 
 export default function PaymentPage() {
@@ -56,6 +56,9 @@ export default function PaymentPage() {
   const [isManualChecking, setIsManualChecking] = useState(false);
   const [localPaymentStatus, setLocalPaymentStatus] = useState<'pending' | 'success' | 'failed' | 'expired'>('pending');
   const [bankInfo, setBankInfo] = useState(DEFAULT_BANK_INFO);
+  // Whether bank transfer is currently an enabled payment method (admin config).
+  // Fail safe: assume disabled until the config confirms it.
+  const [bankTransferEnabled, setBankTransferEnabled] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploadingSlip, setIsUploadingSlip] = useState(false);
@@ -81,6 +84,7 @@ export default function PaymentPage() {
             accountName: result.data.accountName,
             accountNumber: result.data.accountNumber,
           });
+          setBankTransferEnabled(!!result.data.paymentMethods?.bankTransfer);
         }
       })
       .catch(() => {});
@@ -439,7 +443,7 @@ export default function PaymentPage() {
                     {formatPrice(selectedPackage.price)} บาท
                   </p>
                 </div>
-              ) : (
+              ) : bankTransferEnabled ? (
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
@@ -550,6 +554,18 @@ export default function PaymentPage() {
                       </div>
                     </div>
                   )}
+                </div>
+              ) : (
+                <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                  <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-800">
+                      ช่องทางการชำระเงินนี้ไม่พร้อมใช้งาน
+                    </p>
+                    <p className="text-xs text-amber-700 mt-0.5">
+                      กรุณาจองใหม่และชำระผ่าน PromptPay หรือติดต่อทีมงานที่ LINE: @lawmate
+                    </p>
+                  </div>
                 </div>
               )}
             </CardContent>

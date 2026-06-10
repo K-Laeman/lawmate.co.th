@@ -36,7 +36,7 @@ import { useBookingStore } from '@/lib/stores/booking-store';
 import { mockCaseTypes, getSubtypeById } from '@/data/case-types';
 import { formatPrice, formatDuration } from '@/data/packages';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TermsConsent } from './terms-consent';
 
@@ -94,9 +94,46 @@ export function BookingSummary({ onBack }: BookingSummaryProps) {
   const caseTypeInfo = mockCaseTypes.find((ct) => ct.code === caseType);
   const subtypeInfo = caseSubtypeId ? getSubtypeById(caseSubtypeId) : null;
 
+  // Which payment methods are enabled (from admin config). Fail safe to
+  // PromptPay-only — never offer bank transfer unless the config confirms it.
+  const [methodFlags, setMethodFlags] = useState<{ promptpay: boolean; bankTransfer: boolean }>({
+    promptpay: true,
+    bankTransfer: false,
+  });
+
+  useEffect(() => {
+    fetch('/api/v1/payment-config')
+      .then((r) => r.json())
+      .then((result) => {
+        if (result?.success && result.data?.paymentMethods) {
+          const pm = result.data.paymentMethods;
+          setMethodFlags({ promptpay: !!pm.promptpay, bankTransfer: !!pm.bankTransfer });
+        }
+      })
+      .catch(() => {
+        /* keep fail-safe promptpay-only default */
+      });
+  }, []);
+
+  const enabledMethods: ('promptpay' | 'bank_transfer')[] = [
+    ...(methodFlags.promptpay ? (['promptpay'] as const) : []),
+    ...(methodFlags.bankTransfer ? (['bank_transfer'] as const) : []),
+  ];
+
+  // Clear a stale/persisted method that's no longer enabled, and auto-select
+  // when only one method is available.
+  useEffect(() => {
+    if (paymentMethod && !enabledMethods.includes(paymentMethod)) {
+      setPaymentMethod(enabledMethods.length === 1 ? enabledMethods[0] : null);
+    } else if (!paymentMethod && enabledMethods.length === 1) {
+      setPaymentMethod(enabledMethods[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [methodFlags.promptpay, methodFlags.bankTransfer, paymentMethod]);
+
   const handleConfirmClick = () => {
-    if (!paymentMethod) {
-      toast.error('กรุณาเลือกวิธีชำระเงิน');
+    if (!paymentMethod || !enabledMethods.includes(paymentMethod)) {
+      toast.error('กรุณาเลือกวิธีชำระเงินที่พร้อมใช้งาน');
       return;
     }
     if (!termsAccepted) {
@@ -110,6 +147,12 @@ export function BookingSummary({ onBack }: BookingSummaryProps) {
     // Validate required fields before submission
     if (!selectedDate || !selectedTime || !selectedPackage || !paymentMethod) {
       toast.error('ข้อมูลการจองไม่ครบถ้วน กรุณาตรวจสอบอีกครั้ง');
+      return;
+    }
+    // Never submit a payment method that isn't currently enabled (guards a
+    // stale value persisted in localStorage).
+    if (!enabledMethods.includes(paymentMethod)) {
+      toast.error('วิธีชำระเงินที่เลือกไม่พร้อมใช้งาน กรุณาเลือกใหม่');
       return;
     }
 
@@ -198,7 +241,8 @@ export function BookingSummary({ onBack }: BookingSummaryProps) {
     }
   };
 
-  const isComplete = paymentMethod !== null && termsAccepted;
+  const isComplete =
+    paymentMethod !== null && enabledMethods.includes(paymentMethod) && termsAccepted;
 
   return (
     <div className="space-y-6">
@@ -355,32 +399,36 @@ export function BookingSummary({ onBack }: BookingSummaryProps) {
                   }
                   className="space-y-2"
                 >
-                  <div
-                    className={cn(
-                      'flex items-center space-x-3 p-3 rounded-lg border cursor-pointer',
-                      paymentMethod === 'promptpay' && 'border-primary bg-primary/5'
-                    )}
-                  >
-                    <RadioGroupItem value="promptpay" id="promptpay" className="h-4 w-4" />
-                    <Label htmlFor="promptpay" className="flex-1 cursor-pointer">
-                      <span className="font-medium text-sm">PromptPay QR</span>
-                      <p className="text-xs text-gray-500">สแกน QR Code ชำระเงินทันที</p>
-                    </Label>
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0">แนะนำ</Badge>
-                  </div>
+                  {methodFlags.promptpay && (
+                    <div
+                      className={cn(
+                        'flex items-center space-x-3 p-3 rounded-lg border cursor-pointer',
+                        paymentMethod === 'promptpay' && 'border-primary bg-primary/5'
+                      )}
+                    >
+                      <RadioGroupItem value="promptpay" id="promptpay" className="h-4 w-4" />
+                      <Label htmlFor="promptpay" className="flex-1 cursor-pointer">
+                        <span className="font-medium text-sm">PromptPay QR</span>
+                        <p className="text-xs text-gray-500">สแกน QR Code ชำระเงินทันที</p>
+                      </Label>
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0">แนะนำ</Badge>
+                    </div>
+                  )}
 
-                  <div
-                    className={cn(
-                      'flex items-center space-x-3 p-3 rounded-lg border cursor-pointer',
-                      paymentMethod === 'bank_transfer' && 'border-primary bg-primary/5'
-                    )}
-                  >
-                    <RadioGroupItem value="bank_transfer" id="bank_transfer" className="h-4 w-4" />
-                    <Label htmlFor="bank_transfer" className="flex-1 cursor-pointer">
-                      <span className="font-medium text-sm">โอนเงินผ่านธนาคาร</span>
-                      <p className="text-xs text-gray-500">โอนเงินและแนบหลักฐาน</p>
-                    </Label>
-                  </div>
+                  {methodFlags.bankTransfer && (
+                    <div
+                      className={cn(
+                        'flex items-center space-x-3 p-3 rounded-lg border cursor-pointer',
+                        paymentMethod === 'bank_transfer' && 'border-primary bg-primary/5'
+                      )}
+                    >
+                      <RadioGroupItem value="bank_transfer" id="bank_transfer" className="h-4 w-4" />
+                      <Label htmlFor="bank_transfer" className="flex-1 cursor-pointer">
+                        <span className="font-medium text-sm">โอนเงินผ่านธนาคาร</span>
+                        <p className="text-xs text-gray-500">โอนเงินและแนบหลักฐาน</p>
+                      </Label>
+                    </div>
+                  )}
                 </RadioGroup>
               </CardContent>
             </Card>

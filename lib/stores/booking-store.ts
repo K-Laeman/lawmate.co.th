@@ -62,7 +62,7 @@ export interface BookingState {
   setPackage: (pkg: ServicePackage | null) => void;
   setSchedule: (date: Date | null, time: string | null) => void;
   setContact: (phone: string, email: string) => void;
-  setPaymentMethod: (method: 'promptpay' | 'bank_transfer') => void;
+  setPaymentMethod: (method: 'promptpay' | 'bank_transfer' | null) => void;
   setTermsAccepted: (accepted: boolean) => void;
   setBookingResult: (id: string, code: string, qrCodeUrl?: string, expiresAt?: string) => void;
 
