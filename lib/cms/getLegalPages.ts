@@ -11,6 +11,7 @@ export interface LegalPage {
   slug: string
   heroSubtitle?: string
   lastUpdated: string
+  updatedAt?: string
   alertBox?: {
     enabled: boolean
     content?: string
@@ -44,7 +45,7 @@ export async function getLegalPages(
   locale: string = 'th'
 ): Promise<LegalPage[]> {
   try {
-    const query = `?locale=${locale}&limit=20`
+    const query = `?locale=${locale}&limit=100`
 
     const data = await fetchFromCMS<PayloadResponse<LegalPage>>(
       `/legal-pages${query}`,

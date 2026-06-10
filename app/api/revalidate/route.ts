@@ -1,8 +1,13 @@
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Secret token to protect the endpoint
-const REVALIDATION_SECRET = process.env.REVALIDATION_SECRET || 'your-secret-token'
+// Secret token to protect the endpoint. Fail closed: if unset in the
+// environment, every request is rejected (no insecure default fallback).
+const REVALIDATION_SECRET = process.env.REVALIDATION_SECRET
+
+function isValidSecret(secret: unknown): boolean {
+  return Boolean(REVALIDATION_SECRET) && secret === REVALIDATION_SECRET
+}
 
 // Collection to paths mapping for targeted revalidation
 const pathsByCollection: Record<string, string[]> = {
@@ -31,6 +36,7 @@ const pathsByCollection: Record<string, string[]> = {
   'corporate-services': ['/corporate'],
   'popup-banners': ['/'],
   'cookie-consent': ['/'],
+  'tracking-settings': ['/'],
   'navigation-menus': [
     '/',
     '/about',
@@ -88,7 +94,7 @@ export async function POST(request: NextRequest) {
     const { secret, path, paths, collection } = body
 
     // Validate secret
-    if (secret !== REVALIDATION_SECRET) {
+    if (!isValidSecret(secret)) {
       return NextResponse.json({ error: 'Invalid secret' }, { status: 401 })
     }
 
@@ -143,7 +149,7 @@ export async function GET(request: NextRequest) {
   const secret = searchParams.get('secret')
   const path = searchParams.get('path') || '/'
 
-  if (secret !== REVALIDATION_SECRET) {
+  if (!isValidSecret(secret)) {
     return NextResponse.json({ error: 'Invalid secret' }, { status: 401 })
   }
 

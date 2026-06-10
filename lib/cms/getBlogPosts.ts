@@ -18,6 +18,7 @@ export interface BlogPost {
   tags?: Array<{ tag: string }>
   readTime?: number
   publishedDate: string
+  updatedAt?: string
   isFeatured: boolean
   isPublished: boolean
   seo?: {
