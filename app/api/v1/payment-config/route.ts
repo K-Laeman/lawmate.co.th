@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Cache at Vercel Edge CDN — payment config changes infrequently
-export const revalidate = 3600;
+// Never cache: enabled payment methods must reflect admin changes immediately
+// (a stale "bankTransfer:true" could let a customer pay a disabled channel).
+export const dynamic = 'force-dynamic';
 
 export async function GET(_request: NextRequest) {
   const dashboardUrl = process.env.DASHBOARD_URL || 'http://localhost:3000';
 
   try {
     const upstream = await fetch(`${dashboardUrl}/api/v1/payment-config`, {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     });
     const data = await upstream.json();
     const response = NextResponse.json(data, { status: upstream.status });
-    // Cache at browser + CDN — bank info rarely changes
-    response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    response.headers.set('Cache-Control', 'no-store');
     return response;
   } catch {
     return NextResponse.json(
