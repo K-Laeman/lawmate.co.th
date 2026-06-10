@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import Script from 'next/script'
 import type { TrackingSettings } from '@/lib/cms/getTrackingSettings'
 import { useConsentStore } from '@/lib/stores/consent-store'
@@ -9,29 +10,53 @@ interface TrackingScriptsProps {
   tracking: TrackingSettings | null
 }
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void
+  }
+}
+
 /**
- * Renders the cookie-setting tracking scripts ONLY after the visitor's stored
- * consent has hydrated and the relevant category was accepted (PDPA/GDPR).
- * Analytics category gates GA4/GTM + custom scripts; marketing gates ad pixels.
+ * Google Consent Mode v2 updater. GA4/GTM are loaded by the server component in
+ * a DENIED state; this pushes a consent "update" once the visitor's stored
+ * choice has hydrated and whenever it changes (accept/reject in the banner).
+ */
+export function ConsentManager({ hasGoogle }: { hasGoogle: boolean }) {
+  const hasHydrated = useConsentStore((s) => s._hasHydrated)
+  const analytics = useConsentStore((s) => s.preferences.analytics)
+  const marketing = useConsentStore((s) => s.preferences.marketing)
+
+  useEffect(() => {
+    if (!hasGoogle || !hasHydrated || typeof window === 'undefined' || !window.gtag) return
+    window.gtag('consent', 'update', {
+      analytics_storage: analytics ? 'granted' : 'denied',
+      ad_storage: marketing ? 'granted' : 'denied',
+      ad_user_data: marketing ? 'granted' : 'denied',
+      ad_personalization: marketing ? 'granted' : 'denied',
+    })
+  }, [hasGoogle, hasHydrated, analytics, marketing])
+
+  return null
+}
+
+/**
+ * Marketing pixels (Facebook / LINE / TikTok) and admin custom scripts. These
+ * don't support Consent Mode, so they stay fully gated — loaded only after the
+ * relevant consent category is accepted.
  */
 export function ConsentGatedHeadScripts({ tracking }: TrackingScriptsProps) {
   const hasHydrated = useConsentStore((s) => s._hasHydrated)
   const analytics = useConsentStore((s) => s.preferences.analytics)
   const marketing = useConsentStore((s) => s.preferences.marketing)
 
-  // Load nothing until we know the visitor's choice.
   if (!tracking || !hasHydrated) return null
 
-  const { gtm, ga4, facebookPixel, lineInsight, tiktokPixel, customHeadScript } = tracking
+  const { facebookPixel, lineInsight, tiktokPixel, customHeadScript } = tracking
 
-  const safeGtmId = sanitizeId(gtm?.containerId ?? '', /^GTM-[A-Z0-9]+$/)
-  const safeGa4Id = sanitizeId(ga4?.measurementId ?? '', /^G-[A-Z0-9]+$/)
   const safeFbPixelId = sanitizeId(facebookPixel?.pixelId ?? '', /^\d+$/)
   const safeLineTagId = sanitizeId(lineInsight?.tagId ?? '', /^[a-zA-Z0-9_-]+$/)
   const safeTiktokPixelId = sanitizeId(tiktokPixel?.pixelId ?? '', /^[a-zA-Z0-9_-]+$/)
 
-  const showGtm = Boolean(analytics && gtm?.enabled && safeGtmId)
-  const showGa4 = Boolean(analytics && ga4?.enabled && safeGa4Id)
   const showFacebook = Boolean(marketing && facebookPixel?.enabled && safeFbPixelId)
   const showLine = Boolean(marketing && lineInsight?.enabled && safeLineTagId)
   const showTiktok = Boolean(marketing && tiktokPixel?.enabled && safeTiktokPixelId)
@@ -39,33 +64,7 @@ export function ConsentGatedHeadScripts({ tracking }: TrackingScriptsProps) {
 
   return (
     <>
-      {/* Preconnect hints — reduces DNS/TLS handshake time before scripts fire */}
-      {(showGtm || showGa4) && <link rel="preconnect" href="https://www.googletagmanager.com" />}
-      {showGa4 && <link rel="preconnect" href="https://www.google-analytics.com" />}
       {showFacebook && <link rel="preconnect" href="https://connect.facebook.net" />}
-
-      {showGtm && (
-        <Script
-          id="gtm-head"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${safeGtmId}');`,
-          }}
-        />
-      )}
-
-      {showGa4 && (
-        <>
-          <Script id="ga4-src" strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${safeGa4Id}`} />
-          <Script
-            id="ga4-init"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${safeGa4Id}');`,
-            }}
-          />
-        </>
-      )}
 
       {showFacebook && (
         <Script
@@ -111,28 +110,13 @@ export function ConsentGatedBodyScripts({ tracking }: TrackingScriptsProps) {
 
   if (!tracking || !hasHydrated) return null
 
-  const { gtm, facebookPixel, customBodyScript } = tracking
-
-  const safeGtmId = sanitizeId(gtm?.containerId ?? '', /^GTM-[A-Z0-9]+$/)
+  const { facebookPixel, customBodyScript } = tracking
   const safeFbPixelId = sanitizeId(facebookPixel?.pixelId ?? '', /^\d+$/)
-
-  const showGtm = Boolean(analytics && gtm?.enabled && safeGtmId)
   const showFacebook = Boolean(marketing && facebookPixel?.enabled && safeFbPixelId)
   const showCustomBody = Boolean(analytics && customBodyScript)
 
   return (
     <>
-      {showGtm && (
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${safeGtmId}`}
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
-      )}
-
       {showFacebook && (
         <noscript>
           {/* eslint-disable-next-line @next/next/no-img-element */}
