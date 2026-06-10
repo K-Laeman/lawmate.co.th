@@ -15,7 +15,7 @@ export function generateOrganizationJsonLd(): string {
     '@type': 'LegalService',
     name: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/images/logo.png`,
+    logo: `${SITE_CONFIG.url}/logo.svg`,
     description: SITE_CONFIG.defaultDescription,
     contactPoint: {
       '@type': 'ContactPoint',
@@ -127,7 +127,7 @@ export function generateArticleJsonLd(article: {
       '@type': 'Organization',
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
-      logo: `${SITE_CONFIG.url}/images/logo.png`,
+      logo: `${SITE_CONFIG.url}/logo.svg`,
     },
   }
 
